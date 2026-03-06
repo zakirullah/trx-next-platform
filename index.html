@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRX Mining Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #00fff7; --secondary: #ffd700; --glow: rgba(0, 255, 247, 0.5); }
+        body { font-family: 'Rajdhani', sans-serif; background: radial-gradient(circle at 50% 50%, #0f0c29, #302b63, #24243e); color: #fff; margin: 0; overflow-x: hidden; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); }
+        .neon-border { border: 1px solid var(--primary); box-shadow: 0 0 10px var(--glow); }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="flex justify-between items-center p-6 border-b border-white/10">
+        <h1 class="text-2xl font-orbitron font-bold text-[var(--primary)]">TRXMINE</h1>
+        <div class="flex gap-4">
+            <button onclick="showLogin()" class="px-4 py-2 border border-white/20 rounded hover:bg-white/10 transition">Login</button>
+            <button onclick="showRegister()" class="px-4 py-2 bg-[var(--primary)] text-black rounded font-bold">Register</button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <div class="text-center py-20 px-6">
+        <h1 class="text-5xl md:text-7xl font-orbitron text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-white">
+            Next Generation Mining
+        </h1>
+        <p class="text-xl text-gray-400 mt-4 mb-8">Experience the future of blockchain mining.</p>
+        <button onclick="showRegister()" class="px-8 py-4 bg-[var(--primary)] text-black font-bold rounded-lg neon-border">Start Mining</button>
+    </div>
+
+    <!-- CALCULATOR -->
+    <div class="max-w-3xl mx-auto p-6 glass-card rounded-xl m-10 neon-border">
+        <h2 class="text-2xl font-orbitron text-center mb-6 text-[var(--primary)]">Profit Calculator</h2>
+        <div class="flex flex-col md:flex-row gap-4">
+            <input type="number" id="inv" placeholder="Investment (TRX)" class="flex-1 p-3 bg-black/50 rounded border border-white/20 text-white">
+            <button onclick="calc()" class="p-3 bg-white/10 rounded border border-[var(--primary)] hover:bg-[var(--primary)] hover:text-black transition font-bold">Calculate</button>
+        </div>
+        <div id="res" class="hidden grid grid-cols-3 gap-4 mt-6 text-center"></div>
+    </div>
+
+    <!-- LIVE TABLES -->
+    <div class="grid md:grid-cols-2 gap-6 p-6 container mx-auto pb-20">
+        <div class="glass-card p-4 rounded-xl overflow-hidden h-80 overflow-y-auto scrollbar-hide">
+            <h3 class="text-lg font-bold mb-4 text-[var(--primary)]">Live Deposits</h3>
+            <div id="dep"></div>
+        </div>
+        <div class="glass-card p-4 rounded-xl overflow-hidden h-80 overflow-y-auto scrollbar-hide">
+            <h3 class="text-lg font-bold mb-4 text-yellow-400">Live Withdrawals</h3>
+            <div id="wit"></div>
+        </div>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div class="glass-card p-8 rounded-xl w-full max-w-md neon-border">
+            <h2 class="text-2xl font-orbitron text-center mb-6 text-[var(--primary)]">Login</h2>
+            <input type="text" placeholder="Wallet Address" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <input type="password" placeholder="6-Digit PIN" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <button class="w-full py-3 bg-[var(--primary)] text-black font-bold rounded">Login</button>
+            <p onclick="showRegister()" class="text-center mt-4 text-gray-400 cursor-pointer hover:text-white">Don't have an account? Register</p>
+            <p onclick="closeModals()" class="text-center mt-2 text-red-400 cursor-pointer">Close</p>
+        </div>
+    </div>
+
+    <!-- REGISTER MODAL -->
+    <div id="regModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+        <div class="glass-card p-8 rounded-xl w-full max-w-md neon-border">
+            <h2 class="text-2xl font-orbitron text-center mb-6 text-[var(--primary)]">Register</h2>
+            <input type="text" id="rWallet" placeholder="Wallet Address (0x...)" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <input type="password" id="rPin" placeholder="Set 6-Digit PIN" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <input type="text" placeholder="Referral Code (Optional)" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <button onclick="registerUser()" class="w-full py-3 bg-[var(--primary)] text-black font-bold rounded">Create Account</button>
+            <p onclick="showLogin()" class="text-center mt-4 text-gray-400 cursor-pointer hover:text-white">Already have an account? Login</p>
+            <p onclick="closeModals()" class="text-center mt-2 text-red-400 cursor-pointer">Close</p>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBCxxnxq6Egn66Lc5tLyoFm7NpC3NHs6dA",
+            authDomain: "trx-mining-app-72ba7.firebaseapp.com",
+            projectId: "trx-mining-app-72ba7",
+            storageBucket: "trx-mining-app-72ba7.appspot.com",
+            messagingSenderId: "570878543742",
+            appId: "1:570878543742:web:3f6568a2ead8a057e7152f"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.registerUser = async () => {
+            const wallet = document.getElementById('rWallet').value;
+            const pin = document.getElementById('rPin').value;
+            if (!wallet.startsWith("0x")) return alert("Invalid Wallet");
+            if (pin.length !== 6) return alert("PIN must be 6 digits");
+            
+            await addDoc(collection(db, "users"), {
+                wallet: wallet,
+                pin: pin,
+                balance: 0,
+                deposited: 0,
+                activeStake: 0,
+                createdAt: new Date()
+            });
+            alert("Registration Successful!");
+            closeModals();
+        };
+
+        // Live Tables Logic
+        const genRow = () => `<div class="flex justify-between text-sm border-b border-white/5 py-2"><span class="font-mono text-gray-300">0x${Math.random().toString(16).slice(2, 6)}...</span><span class="text-[var(--primary)]">${(Math.random()*500+10).toFixed(2)} TRX</span></div>`;
+        
+        document.getElementById('dep').innerHTML = Array(30).fill(0).map(genRow).join('');
+        document.getElementById('wit').innerHTML = Array(30).fill(0).map(genRow).replace(/var\(--primary\)/g, 'yellow-400');
+
+        setInterval(() => {
+            document.getElementById('dep').innerHTML = genRow() + document.getElementById('dep').innerHTML;
+        }, 3000);
+    </script>
+
+    <!-- Calculator Logic -->
+    <script>
+        function calc() {
+            const inv = parseFloat(document.getElementById('inv').value);
+            if(inv < 10) return alert("Min 10 TRX");
+            const daily = inv * 0.03;
+            const totalReward = inv * 0.20;
+            const totalReturn = inv + totalReward;
+            document.getElementById('res').innerHTML = `
+                <div class="p-3 bg-black/30 rounded"><p class="text-xs text-gray-400">Daily</p><p class="text-lg font-bold">${daily.toFixed(2)}</p></div>
+                <div class="p-3 bg-black/30 rounded"><p class="text-xs text-gray-400">Total Reward</p><p class="text-lg font-bold">${totalReward.toFixed(2)}</p></div>
+                <div class="p-3 bg-black/30 rounded border border-[var(--primary)]"><p class="text-xs text-gray-400">Total Return</p><p class="text-lg font-bold text-[var(--primary)]">${totalReturn.toFixed(2)}</p></div>
+            `;
+            document.getElementById('res').classList.remove('hidden');
+        }
+        function showLogin() { closeModals(); document.getElementById('loginModal').classList.remove('hidden'); }
+        function showRegister() { closeModals(); document.getElementById('regModal').classList.remove('hidden'); }
+        function closeModals() { document.getElementById('loginModal').classList.add('hidden'); document.getElementById('regModal').classList.add('hidden'); }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</body>
+</html>
