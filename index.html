@@ -59,9 +59,9 @@
     <div id="loginModal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-50">
         <div class="glass-card p-8 rounded-xl w-full max-w-md neon-border">
             <h2 class="text-2xl font-orbitron text-center mb-6 text-[var(--primary)]">Login</h2>
-            <input type="text" placeholder="Wallet Address" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
-            <input type="password" placeholder="6-Digit PIN" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
-            <button class="w-full py-3 bg-[var(--primary)] text-black font-bold rounded">Login</button>
+            <input id="lWallet" type="text" placeholder="Wallet Address" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <input id="lPin" type="password" placeholder="6-Digit PIN" class="w-full p-3 mb-4 bg-black/50 rounded border border-white/20 text-white">
+            <button onclick="loginUser()" class="w-full py-3 bg-[var(--primary)] text-black font-bold rounded">Login</button>
             <p onclick="showRegister()" class="text-center mt-4 text-gray-400 cursor-pointer hover:text-white">Don't have an account? Register</p>
             <p onclick="closeModals()" class="text-center mt-2 text-red-400 cursor-pointer">Close</p>
         </div>
@@ -112,6 +112,18 @@
                 createdAt: new Date()
             });
             alert("Registration Successful!");
+            closeModals();
+        };
+
+        window.loginUser = async () => {
+            const wallet = document.getElementById('lWallet').value;
+            const pin = document.getElementById('lPin').value;
+            
+            const q = query(collection(db, "users"), where("wallet", "==", wallet), where("pin", "==", pin));
+            const snap = await getDocs(q);
+            if (snap.empty) return alert("Invalid Credentials");
+            
+            alert("Login Successful!");
             closeModals();
         };
 
