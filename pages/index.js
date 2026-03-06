@@ -39,9 +39,9 @@ export default function Home() {
 
       <div className="relative z-10">
         {/* Navbar */}
-        <nav className="flex justify-between items-center p-6 border-b border-white/10">
+        <nav class="flex justify-between items-center p-6 border-b border-white/10">
           <h1 className="text-2xl font-orbitron font-bold text-[var(--primary-color)]">TRXMINE</h1>
-          <div className="flex gap-4">
+          <div class="flex gap-4">
             <Link href="/login"><button className="px-4 py-2 border border-white/20 rounded hover:bg-white/10 transition">Login</button></Link>
             <Link href="/register"><button className="px-4 py-2 bg-[var(--primary-color)] text-black rounded font-bold">Register</button></Link>
           </div>
