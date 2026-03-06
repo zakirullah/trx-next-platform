@@ -1,23 +1,22 @@
+// pages/index.js
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { motion } from 'framer-motion';
-import Particles from 'react-tsparticles';
-import { loadSlim } from 'tsparticles-slim';
 import Link from 'next/link';
+
+// Particles ko import karne ki zaroorat nahi, direct CSS use karte hain for safe build
 
 export default function Home() {
   const [investment, setInvestment] = useState(100);
   const [result, setResult] = useState(null);
   const [deposits, setDeposits] = useState([]);
-  
+
   // Generate Mock Data
   const genRow = () => ({
     id: Math.random(), 
     wallet: `0x${Math.random().toString(16).slice(2, 6)}...${Math.random().toString(16).slice(2, 6)}`,
     amount: (Math.random() * 500 + 10).toFixed(2),
   });
-
-  const particlesInit = async (engine) => { await loadSlim(engine); };
 
   // Calculator Logic
   const calculate = () => {
@@ -38,13 +37,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">
       <Head><title>TRX Mining Platform</title></Head>
 
-      <Particles init={particlesInit} options={{ 
-          background: { color: "transparent" }, 
-          particles: { color: { value: "var(--primary-color)" },links: { enable: true, color: "var(--primary-color)", opacity: 0.1 }, move: { enable: true, speed: 0.5 }, size: { value: { min: 1, max: 2 } } } 
-      }} className="absolute w-full h-full z-0" />
+      {/* Simple CSS Particles Background as fallback */}
+      <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSIxMDAiIGN5PSIxMDAiIHI9IjIiIGZpbGw9IiMwMGZmZjciIG9wYWNpdHk9IjAuMyIvPjwvc3ZnPg==')] bg-repeat animate-pulse"></div>
 
       <div className="relative z-10">
         {/* Navbar */}
